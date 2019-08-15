@@ -84,16 +84,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String holidayName;
     boolean tomorrowIsHoliday;
     TextView tvCurrentDate;
+    public static final String appPreferences = "appPreferences";
+    public SharedPreferences sharedPreferences;
+    public int monthLoad;
+    public String yearLoad;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tvCurrentDate = findViewById(R.id.tvCurrentDate);
 
+        sharedPreferences = getSharedPreferences(appPreferences, MODE_PRIVATE);
 
-        monthSpinner = findViewById(R.id.monthSpinner);
-        yearSpinner = findViewById(R.id.yearSpinner);
+        initViews();
 
         int year = 1970;
         List<String> years = new ArrayList<>();
@@ -109,24 +112,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         yearSpinner.setAdapter(yearAdapter);
         yearSpinner.setOnItemSelectedListener(this);
-        SharedPreferences sharedPreferences = getSharedPreferences("chosenMonth",MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("monthSpinnerSelection", monthSpinner.getSelectedItem().toString());
-        editor.putString("yearSpinnerSelection", yearSpinner.getSelectedItem().toString());
-        editor.apply();
-        String monthLoad = sharedPreferences.getString("monthSpinnerSelection", "");
-        String yearLoad = sharedPreferences.getString("yearSpinnerSelection", "");
-        Log.d("monthspinnersave",monthSpinner.getSelectedItem().toString());
-        Log.d("monthSpinnerload", monthLoad);
-        Log.d("yearspinnersave",yearSpinner.getSelectedItem().toString());
-        Log.d("yearSpinnerload", yearLoad);
-        monthSpinner.setSelection(Integer.parseInt(monthLoad));
-        yearSpinner.setSelection(Integer.parseInt(yearLoad));
+
+        setSelectionDate();
 
         mMonthChosen.add(monthSpinner.getSelectedItemPosition() + 1);
         mYearChosen.add(yearSpinner.getSelectedItem().toString());
 
-        tv = findViewById(R.id.tv);
 
         myDb = new DatabaseHelper(this);
 
@@ -171,7 +162,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             mFastingDays.add(isFasting);
         }
 
-        recyclerView = findViewById(R.id.recyclerviewMain);
+
         mAdapter = new HolidayViewAdapter(mIds, mNames, mDays, mMonths, mYears, mHolidayRed, mHolidayImage, mFastingDays, mDayOfWeek, mIsStepYear, mMonthChosen, mYearChosen, context);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mAdapter);
@@ -188,6 +179,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+    private void initViews() {
+        recyclerView = findViewById(R.id.recyclerviewMain);
+        tvCurrentDate = findViewById(R.id.tvCurrentDate);
+        monthSpinner = findViewById(R.id.monthSpinner);
+        yearSpinner = findViewById(R.id.yearSpinner);
+        tv = findViewById(R.id.tv);
+    }
+
     public void cancelJob() {
         JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
         scheduler.cancel(123);
@@ -197,6 +196,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onResume() {
         scheduleJob();
+
+        setSelectionDate();
         super.onResume();
     }
 
@@ -336,24 +337,45 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return super.onOptionsItemSelected(item);
     }
 
+    private void setSelectionDate() {
+        monthLoad = sharedPreferences.getInt("monthSpinnerSelection", 0);
+        yearLoad = sharedPreferences.getString("yearSpinnerSelection", "1970");
+        monthSpinner.setSelection(monthLoad - 1);
+        yearSpinner.setSelection(Integer.parseInt(yearLoad) - 1970);
+        Log.d("monthSpinnerLoad", String.valueOf(monthLoad));
+        Log.d("yearSpinnerLoad", yearLoad);
+
+    }
+
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
         Spinner monthSpinner = (Spinner) adapterView;
         Spinner yearSpinner = (Spinner) adapterView;
-        month = mMonthChosen.get(0);
-        year = mYearChosen.get(0);
+        month = monthLoad;
+        year = yearLoad;
         if (monthSpinner.getId() == R.id.monthSpinner) {
             month = (adapterView.getSelectedItemPosition() + 1);
+            editor.putInt("monthSpinnerSelection", month);
+            editor.apply();
+
+            Log.d("monthspinnerSave", String.valueOf(month));
         }
 
         if (yearSpinner.getId() == R.id.yearSpinner) {
             year = adapterView.getSelectedItem().toString();
+            editor.putString("yearSpinnerSelection", year);
+            editor.apply();
+            Log.d("yearspinnerSave", year);
+
         }
         mMonthChosen.clear();
-        mMonthChosen.add(month);
+        mMonthChosen.add(sharedPreferences.getInt("monthSpinnerSelection", 0));
         mYearChosen.clear();
-        mYearChosen.add(year);
-        selectedDate = month + "." + year;
+        mYearChosen.add(sharedPreferences.getString("yearSpinnerSelection", "1970"));
+        selectedDate = mMonthChosen.get(0) + "." + mYearChosen.get(0);
         setDate();
 
         mCursor = myDb.getSelectionData(String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0));
@@ -396,6 +418,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             mFastingDays.add(isFasting);
         }
         mAdapter.notifyDataSetChanged();
+
     }
 
     private void setDate() {
@@ -418,9 +441,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mDayOfWeekv.clear();
         int itemPosition = recyclerView.getChildLayoutPosition(view);
 
-
         Cursor mCursorSd;
-        mCursorSd = myDb.getSelectedDate(String.valueOf(itemPosition), mMonthChosen.get(0).toString(), mYearChosen.get(0));
+        mCursorSd = myDb.getSelectedDate(String.valueOf(itemPosition + 1), mMonthChosen.get(0).toString(), mYearChosen.get(0));
         while (mCursorSd.moveToNext()) {
             String id;
             String dayOfWeek;
