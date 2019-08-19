@@ -36,6 +36,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.example.calendarv2.DatabaseHelperPremade.COLUMN_DAY;
+import static com.example.calendarv2.DatabaseHelperPremade.COLUMN_DAY_OF_WEEK;
+import static com.example.calendarv2.DatabaseHelperPremade.COLUMN_FASTING;
+import static com.example.calendarv2.DatabaseHelperPremade.COLUMN_HOLIDAY_IMAGE;
+import static com.example.calendarv2.DatabaseHelperPremade.COLUMN_HOLIDAY_RED;
+import static com.example.calendarv2.DatabaseHelperPremade.COLUMN_ID;
+import static com.example.calendarv2.DatabaseHelperPremade.COLUMN_MONTH;
+import static com.example.calendarv2.DatabaseHelperPremade.COLUMN_NAME;
+import static com.example.calendarv2.DatabaseHelperPremade.COLUMN_YEAR;
+
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     public TextView tv;
@@ -88,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public SharedPreferences sharedPreferences;
     public int monthLoad;
     public String yearLoad;
+    public DatabaseHelperPremade myDbh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +106,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_main);
 
         sharedPreferences = getSharedPreferences(appPreferences, MODE_PRIVATE);
+
+
+        myDbh = new DatabaseHelperPremade(this);
+        try {
+            myDbh.createDataBase();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        myDbh.openDataBase();
+
 
         initViews();
 
@@ -118,20 +139,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mMonthChosen.add(monthSpinner.getSelectedItemPosition() + 1);
         mYearChosen.add(yearSpinner.getSelectedItem().toString());
 
-
-        myDb = new DatabaseHelper(this);
-
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!prefs.getBoolean("firstTime", false)) {
 
-            databaseSetup();
 
-            SharedPreferences.Editor editor1 = prefs.edit();
-            editor1.putBoolean("firstTime", true);
-            editor1.apply();
-        }
+//        myDb = new DatabaseHelper(this);
+//
+//
+//       if (!prefs.getBoolean("firstTime", false)) {
+//
+//            databaseSetup();
+//
+//            SharedPreferences.Editor editor1 = prefs.edit();
+//            editor1.putBoolean("firstTime", true);
+//            editor1.apply();
+//        }
 
-        mCursor = myDb.getAllData();
+
+//        mCursor = myDb.getAllData();
+
+        String[] tableColumns = new String[] {COLUMN_ID,COLUMN_DAY, COLUMN_MONTH,COLUMN_YEAR, COLUMN_DAY_OF_WEEK, COLUMN_HOLIDAY_RED, COLUMN_NAME,COLUMN_HOLIDAY_IMAGE, COLUMN_FASTING};
+        String whereClause = "month = ? AND year = ?";
+        String [] whereArgs = new String[] {String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0)};
+        mCursor = myDbh.getAllData("holidays", tableColumns, whereClause,whereArgs,null,null,null);
+
         while (mCursor.moveToNext()) {
             String id;
             String dayOfWeek;
@@ -171,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String currentTime;
         currentTime = Calendar.getInstance().getTime().toString();
         tvCurrentDate.setText(currentTime);
-        boolean useNotifications = prefs.getBoolean("key_notifications", false);
+        boolean useNotifications = prefs.getBoolean("key_notifications", true);
 
         if (useNotifications) {
             notificationManagerCompat = NotificationManagerCompat.from(this);
@@ -342,16 +372,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         yearLoad = sharedPreferences.getString("yearSpinnerSelection", "1970");
         monthSpinner.setSelection(monthLoad - 1);
         yearSpinner.setSelection(Integer.parseInt(yearLoad) - 1970);
-        Log.d("monthSpinnerLoad", String.valueOf(monthLoad));
-        Log.d("yearSpinnerLoad", yearLoad);
-
     }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
-
         Spinner monthSpinner = (Spinner) adapterView;
         Spinner yearSpinner = (Spinner) adapterView;
         month = monthLoad;
@@ -360,17 +386,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             month = (adapterView.getSelectedItemPosition() + 1);
             editor.putInt("monthSpinnerSelection", month);
             editor.apply();
-
-            Log.d("monthspinnerSave", String.valueOf(month));
         }
-
         if (yearSpinner.getId() == R.id.yearSpinner) {
             year = adapterView.getSelectedItem().toString();
             editor.putString("yearSpinnerSelection", year);
             editor.apply();
-            Log.d("yearspinnerSave", year);
-
         }
+
         mMonthChosen.clear();
         mMonthChosen.add(sharedPreferences.getInt("monthSpinnerSelection", 0));
         mYearChosen.clear();
@@ -378,7 +400,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         selectedDate = mMonthChosen.get(0) + "." + mYearChosen.get(0);
         setDate();
 
-        mCursor = myDb.getSelectionData(String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0));
+
+//        mCursor = myDb.getSelectionData(String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0));
+        String[] tableColumns = new String[] {COLUMN_ID,COLUMN_DAY, COLUMN_MONTH,COLUMN_YEAR, COLUMN_DAY_OF_WEEK, COLUMN_HOLIDAY_RED, COLUMN_NAME,COLUMN_HOLIDAY_IMAGE, COLUMN_FASTING};
+        String whereClause = "month = ? AND year = ?";
+        String [] whereArgs = new String[] {String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0)};
+
+
+        mCursor = myDbh.getAllData("holidays", null, whereClause,whereArgs,null,null,null);
+
         mIds.clear();
         mNames.clear();
         mDays.clear();
@@ -418,7 +448,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             mFastingDays.add(isFasting);
         }
         mAdapter.notifyDataSetChanged();
-
     }
 
     private void setDate() {
@@ -442,7 +471,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         int itemPosition = recyclerView.getChildLayoutPosition(view);
 
         Cursor mCursorSd;
-        mCursorSd = myDb.getSelectedDate(String.valueOf(itemPosition + 1), mMonthChosen.get(0).toString(), mYearChosen.get(0));
+
+//        mCursorSd = myDb.getSelectedDate(String.valueOf(itemPosition + 1), mMonthChosen.get(0).toString(), mYearChosen.get(0));
+        String[] tableColumns = new String[] {COLUMN_ID,COLUMN_DAY, COLUMN_MONTH,COLUMN_YEAR, COLUMN_DAY_OF_WEEK, COLUMN_HOLIDAY_RED, COLUMN_NAME,COLUMN_HOLIDAY_IMAGE, COLUMN_FASTING};
+        String whereClause = "month = ? AND year = ?";
+        String [] whereArgs = new String[] {String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0)};
+
+
+        mCursorSd = myDbh.getAllData("holidays", null, whereClause,whereArgs,null,null,null);
+
         while (mCursorSd.moveToNext()) {
             String id;
             String dayOfWeek;
@@ -484,10 +521,5 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         AlertDialog dialog = builder.create();
 
         dialog.show();
-
     }
-
 }
-
-
-
