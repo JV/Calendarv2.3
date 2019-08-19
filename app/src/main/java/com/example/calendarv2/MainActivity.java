@@ -361,8 +361,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 startActivity(settings);
                 return true;
             case R.id.holidayBase:
-                Intent holidays = new Intent(MainActivity.this, HolidayBase.class);
-                startActivity(holidays);
+//                Intent holidays = new Intent(MainActivity.this, HolidayBase.class);
+//                startActivity(holidays);
         }
         return super.onOptionsItemSelected(item);
     }
