@@ -150,7 +150,7 @@ public class HolidayViewAdapter extends RecyclerView.Adapter<HolidayViewAdapter.
             tvDayOfWeek = itemView.findViewById(R.id.tvDayOfWeek);
             tvHolidayName = itemView.findViewById(R.id.tvHolidayName);
             ivFasting = itemView.findViewById(R.id.ivFasting);
-            recyclerView = itemView.findViewById(R.id.recyclerview);
+            recyclerView = itemView.findViewById(R.id.recyclerviewMain);
         }
     }
 }

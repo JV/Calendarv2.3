@@ -17,11 +17,8 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
         addPreferencesFromResource(R.xml.preferences);
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
         boolean useNotifications = prefs.getBoolean("key_notifications", false);
-
         Log.d("NotifiSet", String.valueOf(useNotifications));
-
 
     }
 
@@ -47,13 +44,8 @@ public class SettingsActivity extends PreferenceActivity implements SharedPrefer
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
-
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
         boolean useNotifications = prefs.getBoolean("key_notifications", false);
-
         Log.d("NotifChange", String.valueOf(useNotifications));
-
-
     }
 }

@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public ArrayList<Integer> mMonthChosen = new ArrayList<>();
     public ArrayList<String> mYearChosen = new ArrayList<>();
 
-
     public ArrayList<String> mNamesv = new ArrayList<>();
     public ArrayList<String> mIdsv = new ArrayList<>();
     public ArrayList<String> mDayOfWeekv = new ArrayList<>();
@@ -187,11 +186,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             mFastingDays.add(isFasting);
         }
 
-
         mAdapter = new HolidayViewAdapter(mIds, mNames, mDays, mMonths, mYears, mHolidayRed, mHolidayImage, mFastingDays, mDayOfWeek, mIsStepYear, mMonthChosen, mYearChosen, context);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mAdapter);
-
 
         String currentTime;
         currentTime = Calendar.getInstance().getTime().toString();
@@ -464,8 +461,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 //        mCursorSd = myDb.getSelectedDate(String.valueOf(itemPosition + 1), mMonthChosen.get(0).toString(), mYearChosen.get(0));
         String[] tableColumns = new String[]{COLUMN_ID, COLUMN_DAY, COLUMN_MONTH, COLUMN_YEAR, COLUMN_DAY_OF_WEEK, COLUMN_HOLIDAY_RED, COLUMN_NAME, COLUMN_HOLIDAY_IMAGE, COLUMN_FASTING};
-        String whereClause = "month = ? AND year = ?";
-        String[] whereArgs = new String[]{String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0)};
+        String whereClause = "day = ? AND month = ? AND year = ?";
+        String[] whereArgs = new String[]{String.valueOf(itemPosition+1),String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0)};
 
         mCursorSd = myDbh.getAllData("holidays", null, whereClause, whereArgs, null, null, null);
 
