@@ -91,8 +91,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     ActionBar ab;
     public JobInfo info;
     private NotificationManagerCompat notificationManagerCompat;
-    private String holidayName;
-    boolean tomorrowIsHoliday;
+
     TextView tvCurrentDate;
     public static final String appPreferences = "appPreferences";
     public SharedPreferences sharedPreferences;

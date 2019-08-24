@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.util.Log;
 
 import java.io.FileOutputStream;
@@ -14,7 +15,7 @@ import java.io.OutputStream;
 
 public class DatabaseHelperPremade extends SQLiteOpenHelper {
 
-    String DB_PATH = null;
+
     private static String DATABASE_NAME = "holidays3.db";
     public static final String TABLE_NAME = "holidays";
     public static final String COLUMN_ID = "_id";
@@ -26,14 +27,14 @@ public class DatabaseHelperPremade extends SQLiteOpenHelper {
     public static final String COLUMN_YEAR = "year";
     public static final String COLUMN_NAME = "holidayName";
     public static final String COLUMN_FASTING = "fasting";
-
+    String DB_PATH = null;
     private SQLiteDatabase myDb;
 
-    private final Context myContext;
+    private Context myContext;
 
     public DatabaseHelperPremade(Context context) {
 
-        super(context, DATABASE_NAME, null, 3);
+        super(context, DATABASE_NAME, null, 6);
         this.myContext = context;
         this.DB_PATH = "/data/data/" + context.getPackageName() + "/" + "databases/";
         Log.e("path1", DB_PATH);
@@ -46,11 +47,11 @@ public class DatabaseHelperPremade extends SQLiteOpenHelper {
         if (dbExist) {
 
         } else {
-            this.getReadableDatabase();
+            this.getWritableDatabase();
+
             try {
                 copyDataBase();
             } catch (IOException e) {
-                throw new Error("Error copying base");
 
             }
         }
@@ -73,12 +74,12 @@ public class DatabaseHelperPremade extends SQLiteOpenHelper {
     }
 
     private void copyDataBase() throws IOException {
-        InputStream myInput = myContext.getAssets().open(DATABASE_NAME);
+        InputStream myInput = myContext.getAssets().open("databases/" + DATABASE_NAME);
         String outFileName = DB_PATH + DATABASE_NAME;
         OutputStream myOutput = new FileOutputStream(outFileName);
         byte[] buffer = new byte[1024];
         int length;
-        while ((length = myInput.read(buffer)) > 0) {
+        while ((length = myInput.read(buffer)) != -1) {
             myOutput.write(buffer, 0, length);
         }
         myOutput.flush();
@@ -88,7 +89,7 @@ public class DatabaseHelperPremade extends SQLiteOpenHelper {
 
     public void openDataBase() throws SQLException {
         String myPath = DB_PATH + DATABASE_NAME;
-        myDb = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
+        myDb = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READWRITE);
     }
 
 
@@ -107,7 +108,6 @@ public class DatabaseHelperPremade extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
         if (i > i1) {
             try {
                 copyDataBase();
@@ -117,6 +117,12 @@ public class DatabaseHelperPremade extends SQLiteOpenHelper {
         }
     }
 
+
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        db.disableWriteAheadLogging();
+    }
 
     public Cursor getAllData(String table, String [] columns, String selection, String [] selectionArgs, String groupBy, String having, String orderBy) {
 
