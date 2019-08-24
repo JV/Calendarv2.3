@@ -180,7 +180,7 @@ public class JobServiceApp extends JobService {
                 checkIfTomorrowIsHoliday();
                 checkIfTomorrowIsFasting();
                 try {
-                    Thread.sleep(10 * 60 * 1000);
+                    Thread.sleep(60 * 1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
