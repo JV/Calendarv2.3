@@ -88,8 +88,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public Cursor mCursor;
     public Spinner monthSpinner;
     public Spinner yearSpinner;
-    ActionBar ab;
-    public JobInfo info;
+
     private NotificationManagerCompat notificationManagerCompat;
 
     TextView tvCurrentDate;
@@ -106,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         sharedPreferences = getSharedPreferences(appPreferences, MODE_PRIVATE);
 
-
         myDbh = new DatabaseHelperPremade(this);
         try {
             myDbh.createDataBase();
@@ -114,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             e.printStackTrace();
         }
         myDbh.openDataBase();
-
 
         initViews();
 
@@ -140,7 +137,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-
 //        myDb = new DatabaseHelper(this);
 //
 //
@@ -156,10 +152,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 //        mCursor = myDb.getAllData();
 
-        String[] tableColumns = new String[] {COLUMN_ID,COLUMN_DAY, COLUMN_MONTH,COLUMN_YEAR, COLUMN_DAY_OF_WEEK, COLUMN_HOLIDAY_RED, COLUMN_NAME,COLUMN_HOLIDAY_IMAGE, COLUMN_FASTING};
+        String[] tableColumns = new String[]{COLUMN_ID, COLUMN_DAY, COLUMN_MONTH, COLUMN_YEAR, COLUMN_DAY_OF_WEEK, COLUMN_HOLIDAY_RED, COLUMN_NAME, COLUMN_HOLIDAY_IMAGE, COLUMN_FASTING};
         String whereClause = "month = ? AND year = ?";
-        String [] whereArgs = new String[] {String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0)};
-        mCursor = myDbh.getAllData("holidays", tableColumns, whereClause,whereArgs,null,null,null);
+        String[] whereArgs = new String[]{String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0)};
+        mCursor = myDbh.getAllData("holidays", tableColumns, whereClause, whereArgs, null, null, null);
 
         while (mCursor.moveToNext()) {
             String id;
@@ -196,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mAdapter);
 
-        Calendar calendar;
+
         String currentTime;
         currentTime = Calendar.getInstance().getTime().toString();
         tvCurrentDate.setText(currentTime);
@@ -359,9 +355,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Intent settings = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(settings);
                 return true;
-            case R.id.holidayBase:
-//                Intent holidays = new Intent(MainActivity.this, HolidayBase.class);
-//                startActivity(holidays);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -399,14 +392,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         selectedDate = mMonthChosen.get(0) + "." + mYearChosen.get(0);
         setDate();
 
-
 //        mCursor = myDb.getSelectionData(String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0));
-        String[] tableColumns = new String[] {COLUMN_ID,COLUMN_DAY, COLUMN_MONTH,COLUMN_YEAR, COLUMN_DAY_OF_WEEK, COLUMN_HOLIDAY_RED, COLUMN_NAME,COLUMN_HOLIDAY_IMAGE, COLUMN_FASTING};
+        String[] tableColumns = new String[]{COLUMN_ID, COLUMN_DAY, COLUMN_MONTH, COLUMN_YEAR, COLUMN_DAY_OF_WEEK, COLUMN_HOLIDAY_RED, COLUMN_NAME, COLUMN_HOLIDAY_IMAGE, COLUMN_FASTING};
         String whereClause = "month = ? AND year = ?";
-        String [] whereArgs = new String[] {String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0)};
+        String[] whereArgs = new String[]{String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0)};
 
-
-        mCursor = myDbh.getAllData("holidays", null, whereClause,whereArgs,null,null,null);
+        mCursor = myDbh.getAllData("holidays", null, whereClause, whereArgs, null, null, null);
 
         mIds.clear();
         mNames.clear();
@@ -472,12 +463,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Cursor mCursorSd;
 
 //        mCursorSd = myDb.getSelectedDate(String.valueOf(itemPosition + 1), mMonthChosen.get(0).toString(), mYearChosen.get(0));
-        String[] tableColumns = new String[] {COLUMN_ID,COLUMN_DAY, COLUMN_MONTH,COLUMN_YEAR, COLUMN_DAY_OF_WEEK, COLUMN_HOLIDAY_RED, COLUMN_NAME,COLUMN_HOLIDAY_IMAGE, COLUMN_FASTING};
+        String[] tableColumns = new String[]{COLUMN_ID, COLUMN_DAY, COLUMN_MONTH, COLUMN_YEAR, COLUMN_DAY_OF_WEEK, COLUMN_HOLIDAY_RED, COLUMN_NAME, COLUMN_HOLIDAY_IMAGE, COLUMN_FASTING};
         String whereClause = "month = ? AND year = ?";
-        String [] whereArgs = new String[] {String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0)};
+        String[] whereArgs = new String[]{String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0)};
 
-
-        mCursorSd = myDbh.getAllData("holidays", null, whereClause,whereArgs,null,null,null);
+        mCursorSd = myDbh.getAllData("holidays", null, whereClause, whereArgs, null, null, null);
 
         while (mCursorSd.moveToNext()) {
             String id;

@@ -34,7 +34,7 @@ public class DatabaseHelperPremade extends SQLiteOpenHelper {
 
     public DatabaseHelperPremade(Context context) {
 
-        super(context, DATABASE_NAME, null, 6);
+        super(context, DATABASE_NAME, null, 3);
         this.myContext = context;
         this.DB_PATH = "/data/data/" + context.getPackageName() + "/" + "databases/";
         Log.e("path1", DB_PATH);
