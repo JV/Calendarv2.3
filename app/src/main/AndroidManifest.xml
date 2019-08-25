@@ -19,7 +19,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".HolidayBase"></activity>
         <activity android:name=".SettingsActivity"></activity>
     <service android:name=".JobServiceApp"
         android:permission="android.permission.BIND_JOB_SERVICE"

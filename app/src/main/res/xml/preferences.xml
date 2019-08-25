@@ -3,14 +3,17 @@
 
     <PreferenceCategory
         android:key="user_category"
-        android:title="@string/options">
+        android:title="@string/options"
+        >
 
         <CheckBoxPreference
             android:defaultValue="true"
+
             android:key="key_notifications"
             android:title="Send holiday notifications"
             android:summary="Enable/Disable notifications"
-            android:id="@+id/checkboxShowHide">
+            android:id="@+id/checkboxShowHide"
+            android:background="@drawable/border">
 
         </CheckBoxPreference>
     </PreferenceCategory>

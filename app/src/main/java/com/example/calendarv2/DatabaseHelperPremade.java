@@ -15,7 +15,6 @@ import java.io.OutputStream;
 
 public class DatabaseHelperPremade extends SQLiteOpenHelper {
 
-
     private static String DATABASE_NAME = "holidays3.db";
     public static final String TABLE_NAME = "holidays";
     public static final String COLUMN_ID = "_id";
@@ -48,7 +47,6 @@ public class DatabaseHelperPremade extends SQLiteOpenHelper {
 
         } else {
             this.getWritableDatabase();
-
             try {
                 copyDataBase();
             } catch (IOException e) {
@@ -56,7 +54,6 @@ public class DatabaseHelperPremade extends SQLiteOpenHelper {
             }
         }
     }
-
 
     private boolean checkDataBase() {
         SQLiteDatabase checkDB = null;
@@ -66,7 +63,6 @@ public class DatabaseHelperPremade extends SQLiteOpenHelper {
         } catch (SQLException e) {
 
         }
-
         if (checkDB != null) {
             checkDB.close();
         }
@@ -117,7 +113,6 @@ public class DatabaseHelperPremade extends SQLiteOpenHelper {
         }
     }
 
-
     @Override
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
@@ -126,18 +121,13 @@ public class DatabaseHelperPremade extends SQLiteOpenHelper {
 
     public Cursor getAllData(String table, String [] columns, String selection, String [] selectionArgs, String groupBy, String having, String orderBy) {
 
-        return myDb.query("holidays", columns, selection, selectionArgs, null, null, null);
-
+        return myDb.query(TABLE_NAME, columns, selection, selectionArgs, null, null, null);
     }
 
     public Cursor getAllData1() {
 
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + TABLE_NAME, null);
-
         return cursor;
-
     }
-
-
 }

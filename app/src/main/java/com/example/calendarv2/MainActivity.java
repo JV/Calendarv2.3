@@ -45,6 +45,7 @@ import static com.example.calendarv2.DatabaseHelperPremade.COLUMN_ID;
 import static com.example.calendarv2.DatabaseHelperPremade.COLUMN_MONTH;
 import static com.example.calendarv2.DatabaseHelperPremade.COLUMN_NAME;
 import static com.example.calendarv2.DatabaseHelperPremade.COLUMN_YEAR;
+import static com.example.calendarv2.DatabaseHelperPremade.TABLE_NAME;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             year++;
         }
         ArrayAdapter<CharSequence> monthAdapter = ArrayAdapter.createFromResource(this, R.array.months, android.R.layout.simple_spinner_item);
-        ArrayAdapter<String> yearAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_spinner_item, years);
+        ArrayAdapter<String> yearAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_spinner_item, years);
         monthAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         monthSpinner.setAdapter(monthAdapter);
         monthSpinner.setOnItemSelectedListener(this);
@@ -154,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String[] tableColumns = new String[]{COLUMN_ID, COLUMN_DAY, COLUMN_MONTH, COLUMN_YEAR, COLUMN_DAY_OF_WEEK, COLUMN_HOLIDAY_RED, COLUMN_NAME, COLUMN_HOLIDAY_IMAGE, COLUMN_FASTING};
         String whereClause = "month = ? AND year = ?";
         String[] whereArgs = new String[]{String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0)};
-        mCursor = myDbh.getAllData("holidays", tableColumns, whereClause, whereArgs, null, null, null);
+        mCursor = myDbh.getAllData(TABLE_NAME, tableColumns, whereClause, whereArgs, null, null, null);
 
         while (mCursor.moveToNext()) {
             String id;
@@ -211,7 +212,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public void cancelJob() {
         JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-        scheduler.cancel(123);
+        if (scheduler != null) {
+            scheduler.cancel(123);
+        }
         Log.d("Cancelled job", "cancelJob: " + 123);
     }
 
@@ -239,7 +242,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     .build();
 
             JobScheduler scheduler = (JobScheduler) getSystemService(JOB_SCHEDULER_SERVICE);
-            int resultCode = scheduler.schedule(info);
+            int resultCode = 0;
+            if (scheduler != null) {
+                resultCode = scheduler.schedule(info);
+            }
             if (resultCode == JobScheduler.RESULT_SUCCESS) {
                 Log.d("JOB", "Scheduled in " + (60 * 1000) + "milliseconds");
             }
@@ -394,7 +400,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String whereClause = "month = ? AND year = ?";
         String[] whereArgs = new String[]{String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0)};
 
-        mCursor = myDbh.getAllData("holidays", null, whereClause, whereArgs, null, null, null);
+        mCursor = myDbh.getAllData(TABLE_NAME, null, whereClause, whereArgs, null, null, null);
 
         mIds.clear();
         mNames.clear();
@@ -464,7 +470,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String whereClause = "day = ? AND month = ? AND year = ?";
         String[] whereArgs = new String[]{String.valueOf(itemPosition+1),String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0)};
 
-        mCursorSd = myDbh.getAllData("holidays", null, whereClause, whereArgs, null, null, null);
+        mCursorSd = myDbh.getAllData(TABLE_NAME, null, whereClause, whereArgs, null, null, null);
 
         while (mCursorSd.moveToNext()) {
             String id;
