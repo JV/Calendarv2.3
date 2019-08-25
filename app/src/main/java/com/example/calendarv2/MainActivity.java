@@ -1,7 +1,9 @@
 package com.example.calendarv2;
 
 import android.app.ActionBar;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
@@ -9,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -20,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -97,6 +101,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public int monthLoad;
     public String yearLoad;
     public DatabaseHelperPremade myDbh;
+    AlarmManager alarmManager;
+    PendingIntent pendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         myDbh.openDataBase();
 
         initViews();
+
 
         int year = 1970;
         List<String> years = new ArrayList<>();
@@ -200,6 +207,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             notificationManagerCompat = NotificationManagerCompat.from(this);
             scheduleJob();
         }
+        startAlert();
+    }
+
+    public void startAlert() {
+        int timeInSec = 2;
+
+        Intent intent = new Intent(this, Alarm.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                this.getApplicationContext(), 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (timeInSec * 1000),1000 * 60, pendingIntent);
     }
 
     private void initViews() {
@@ -395,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         selectedDate = mMonthChosen.get(0) + "." + mYearChosen.get(0);
         setDate();
 
-//        mCursor = myDb.getSelectionData(String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0));
+//      mCursor = myDb.getSelectionData(String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0));
         String[] tableColumns = new String[]{COLUMN_ID, COLUMN_DAY, COLUMN_MONTH, COLUMN_YEAR, COLUMN_DAY_OF_WEEK, COLUMN_HOLIDAY_RED, COLUMN_NAME, COLUMN_HOLIDAY_IMAGE, COLUMN_FASTING};
         String whereClause = "month = ? AND year = ?";
         String[] whereArgs = new String[]{String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0)};
@@ -465,7 +483,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         Cursor mCursorSd;
 
-//        mCursorSd = myDb.getSelectedDate(String.valueOf(itemPosition + 1), mMonthChosen.get(0).toString(), mYearChosen.get(0));
+//      mCursorSd = myDb.getSelectedDate(String.valueOf(itemPosition + 1), mMonthChosen.get(0).toString(), mYearChosen.get(0));
         String[] tableColumns = new String[]{COLUMN_ID, COLUMN_DAY, COLUMN_MONTH, COLUMN_YEAR, COLUMN_DAY_OF_WEEK, COLUMN_HOLIDAY_RED, COLUMN_NAME, COLUMN_HOLIDAY_IMAGE, COLUMN_FASTING};
         String whereClause = "day = ? AND month = ? AND year = ?";
         String[] whereArgs = new String[]{String.valueOf(itemPosition+1),String.valueOf(mMonthChosen.get(0)), mYearChosen.get(0)};
