@@ -3,18 +3,15 @@ package com.example.calendarv2;
 import android.app.Notification;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import static com.example.calendarv2.Notifications.CHANNEL_1_ID;
 import static com.example.calendarv2.Notifications.CHANNEL_2_ID;
@@ -48,7 +45,6 @@ public class JobServiceApp extends JobService {
 
         boolean useNotifications = prefs.getBoolean("key_notifications", false);
 
-        Log.d("NotificationSer", String.valueOf(useNotifications));
         if (useNotifications) {
 
             mIdst.clear();
@@ -251,7 +247,6 @@ public class JobServiceApp extends JobService {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .build();
-        Log.d("Holiday", holidayName);
         notificationManagerCompat.notify(2, notification);
     }
 }
