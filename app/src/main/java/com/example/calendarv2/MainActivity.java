@@ -101,8 +101,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public int monthLoad;
     public String yearLoad;
     public DatabaseHelperPremade myDbh;
-    AlarmManager alarmManager;
-    PendingIntent pendingIntent;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +119,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         myDbh.openDataBase();
 
         initViews();
-
 
         int year = 1970;
         List<String> years = new ArrayList<>();
@@ -144,20 +142,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-//        myDb = new DatabaseHelper(this);
+//      myDb = new DatabaseHelper(this);
 //
 //
-//       if (!prefs.getBoolean("firstTime", false)) {
+//      if (!prefs.getBoolean("firstTime", false)) {
 //
 //            databaseSetup();
 //
 //            SharedPreferences.Editor editor1 = prefs.edit();
 //            editor1.putBoolean("firstTime", true);
 //            editor1.apply();
-//        }
+//      }
 
 
-//        mCursor = myDb.getAllData();
+//      mCursor = myDb.getAllData();
 
         String[] tableColumns = new String[]{COLUMN_ID, COLUMN_DAY, COLUMN_MONTH, COLUMN_YEAR, COLUMN_DAY_OF_WEEK, COLUMN_HOLIDAY_RED, COLUMN_NAME, COLUMN_HOLIDAY_IMAGE, COLUMN_FASTING};
         String whereClause = "month = ? AND year = ?";

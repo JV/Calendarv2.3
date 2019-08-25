@@ -25,20 +25,6 @@ public class JobServiceApp extends JobService {
 
     private boolean isCancelled = false;
     NotificationManagerCompat notificationManagerCompat;
-    public List<Holiday> holidays = new ArrayList<>();
-    public ArrayList<String> mNamess = new ArrayList<>();
-    public ArrayList<String> mIdss = new ArrayList<>();
-    public ArrayList<String> mDayOfWeeks = new ArrayList<>();
-    public ArrayList<String> mDayss = new ArrayList<>();
-    public ArrayList<String> mMonthss = new ArrayList<>();
-    public ArrayList<String> mYearss = new ArrayList<>();
-    public ArrayList<String> mHolidayReds = new ArrayList<>();
-    public ArrayList<String> mHolidayImages = new ArrayList<>();
-    public ArrayList<String> mFastingDayss = new ArrayList<>();
-    public ArrayList<String> mIsStepYears = new ArrayList<>();
-    public ArrayList<Integer> mMonthChosens = new ArrayList<>();
-    public ArrayList<String> mYearChosens = new ArrayList<>();
-    public ArrayList<String> tomorrowDates = new ArrayList<>();
 
     public ArrayList<String> mNamest = new ArrayList<>();
     public ArrayList<String> mIdst = new ArrayList<>();
@@ -50,11 +36,7 @@ public class JobServiceApp extends JobService {
     public ArrayList<String> mHolidayImaget = new ArrayList<>();
     public ArrayList<String> mFastingDayst = new ArrayList<>();
 
-    public String selectedDates;
-    public int months;
-    public String years;
     DatabaseHelper myDbs;
-    public Context context;
     Cursor mCursorToday;
     Cursor mCursorTomorrow;
     SharedPreferences prefs;

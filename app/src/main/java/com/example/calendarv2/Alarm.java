@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import java.util.Calendar;
 
@@ -19,7 +18,8 @@ public class Alarm extends BroadcastReceiver {
         context.startService(serviceIntent);
 
     }
-    public void setAlarm(Context context){
+
+    public void setAlarm(Context context) {
 
         Calendar cal = Calendar.getInstance();
 
@@ -29,7 +29,7 @@ public class Alarm extends BroadcastReceiver {
 
 
         AlarmManager am = (AlarmManager) context.getSystemService(context.ALARM_SERVICE);
-        am.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),1000 * 60, sender);
+        am.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 1000 * 60, sender);
     }
 
 
